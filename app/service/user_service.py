@@ -41,10 +41,12 @@ def get_current_user(db:Session,http_authorization_credentials:HTTPBearer) -> Us
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
-def checkRole(role:str,db:Session,http_authorization_credentials:HTTPBearer):
-    user =get_current_user(db,http_authorization_credentials)
-    if user.role not in 
-    pass
+def check_role(role:tuple,db:Session,http_authorization_credentials:HTTPBearer):
+    user=get_current_user(db,http_authorization_credentials)
+    if user.role not in role and role:
+          raise HTTPException(status_code=400,
+                                detail=f'User {user.email} can not access this api')
+    
 
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
