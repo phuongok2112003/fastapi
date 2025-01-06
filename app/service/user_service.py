@@ -8,18 +8,15 @@ from pydantic import ValidationError
 import jwt
 from fastapi.security import HTTPBearer
 from app.core.config import settings
-from app.db.session import get_db
 from starlette import status
 from typing import Optional
-from app.db.session import get_db
-
+from fastapi_sqlalchemy import db
 class UserService:
     def __init__(self):
-        self.db = get_db()
-        self.reusable_oauth2 = HTTPBearer(
-    scheme_name='Authorization'
-)
-
+        self.db = db.session
+        
+       
+  
     def create_user(self, user: UserCreate) -> User:
         exist_user = self.db.query(User).filter(User.email == user.email).first()
         if exist_user:
@@ -30,10 +27,10 @@ class UserService:
         self.db.refresh(db_user)
         return db_user
 
-    def get_current_user(self, http_authorization_credentials: str) -> User:
+    def get_current_user(self,http_authorization_credentials:HTTPBearer) -> User:
         try:
             payload = jwt.decode(
-                http_authorization_credentials, settings.SECRET_KEY,
+                http_authorization_credentials.credentials, settings.SECRET_KEY,
                 algorithms=[settings.SECURITY_ALGORITHM]
             )
             token_data = TokenPayload(**payload)

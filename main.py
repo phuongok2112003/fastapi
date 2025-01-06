@@ -5,7 +5,7 @@ from app.db.session import engine
 from app.core.config import settings
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
-
+from fastapi_sqlalchemy import DBSessionMiddleware
 Base.metadata.create_all(bind=engine)
 
 
@@ -14,6 +14,13 @@ Base.metadata.create_all(bind=engine)
 
 def start_application()->FastAPI:
     application=FastAPI(title="FastAPI")
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],)
+    application.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
     application.include_router(router=router,prefix=settings.API_PREFIX)
     return application
 

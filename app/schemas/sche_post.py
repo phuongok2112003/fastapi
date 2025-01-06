@@ -8,7 +8,7 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    author_id: int
+    pass
 
 
 class PostResponse(PostBase):

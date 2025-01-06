@@ -1,46 +1,23 @@
-from typing import Optional, TypeVar, Generic
-from pydantic.generics import GenericModel
-
 from pydantic import BaseModel
+from typing import TypeVar, Generic, Optional
 
 T = TypeVar("T")
 
-
-class ResponseSchemaBase(BaseModel):
-    __abstract__ = True
-
-    code: str = ''
-    message: str = ''
-
-    def custom_response(self, code: str, message: str):
-        self.code = code
-        self.message = message
-        return self
-
-    def success_response(self):
-        self.code = '000'
-        self.message = 'Thành công'
-        return self
-
-
-class DataResponse(ResponseSchemaBase, GenericModel, Generic[T]):
-    data: Optional[T] = None
+class DataResponse(BaseModel, Generic[T]):
+    code: str = '000'
+    message: str = 'Thành công'
+    data: Optional[T] = None  # Generic
 
     class Config:
         arbitrary_types_allowed = True
 
-    def custom_response(self, code: str, message: str, data: T):
-        self.code = code
-        self.message = message
-        self.data = data
-        return self
+    def custom_response(self, code: str, message: str, data: T) -> "DataResponse[T]":
+        # Trả về một đối tượng DataResponse mới thay vì thay đổi đối tượng hiện tại
+        return DataResponse[T](code=code, message=message, data=data)
 
-    def success_response(self, data: T):
-        self.code = '000'
-        self.message = 'Thành công'
-        self.data = data
-        return self
-
+    def success_response(self, data: T) -> "DataResponse[T]":
+        # Trả về đối tượng DataResponse với trạng thái thành công
+        return DataResponse[T](code='000', message='Thành công', data=data)
 
 class MetadataSchema(BaseModel):
     current_page: int

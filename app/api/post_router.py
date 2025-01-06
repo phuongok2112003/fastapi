@@ -1,19 +1,20 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.schemas.sche_post import PostCreate, PostResponse
-from app.service.post_service import create_post, get_posts
+from app.service.post_service import PostService
 from app.db.session import get_db
-
+from app.core.config import auth
+from fastapi.security import HTTPBearer
 router = APIRouter()
 
 
 
 
 @router.post("/", response_model=PostResponse)
-def create(post: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db, post)
+def create(post: PostCreate,postservice:PostService=Depends(),auth2:HTTPBearer=Depends(auth)):
+    return postservice.create_post(post,auth2=auth2)
 
 
 @router.get("/", response_model=list[PostResponse])
-def read(db: Session = Depends(get_db)):
-    return get_posts(db)
+def read(skip: int = 0, limit: int = 10,postservice:PostService=Depends()):
+    return postservice.get_posts(skip=skip,limit=limit)
