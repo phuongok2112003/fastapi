@@ -6,10 +6,8 @@ from app.core.config import settings
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
+from app.until.exception_handler import CustomException,http_exception_handler
 Base.metadata.create_all(bind=engine)
-
-
-
 
 
 def start_application()->FastAPI:
@@ -22,6 +20,7 @@ def start_application()->FastAPI:
         allow_headers=["*"],)
     application.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
     application.include_router(router=router,prefix=settings.API_PREFIX)
+    application.add_exception_handler(CustomException, http_exception_handler)
     return application
 
 app = start_application()

@@ -1,7 +1,7 @@
-from sqlalchemy.orm import Session
+from fastapi import Depends
 from app.model.models import User
 from app.schemas.sche_token import TokenPayload
-from app.schemas.sche_user import UserCreate, EmailPass
+from app.schemas.sche_user import UserCreate, EmailPass,UserResponse
 from app.core.security import verify_password, get_password_hash
 from fastapi import HTTPException
 from pydantic import ValidationError
@@ -11,6 +11,8 @@ from app.core.config import settings
 from starlette import status
 from typing import Optional
 from fastapi_sqlalchemy import db
+from app.until.page import paginate,Page
+from app.schemas.sche_page import PaginationParams
 class UserService:
     def __init__(self):
         self.db = db.session
@@ -55,3 +57,7 @@ class UserService:
         if not user or not verify_password(email_password.password, user.password):
             return None
         return user
+    
+    def get_page_user(self,param:PaginationParams)->"Page[UserResponse]":
+        _query=self.db.query(User)
+        return paginate(model=User,model_response=UserResponse,query=_query,params=param)

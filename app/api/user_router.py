@@ -9,7 +9,8 @@ from app.core.security import create_access_token
 from typing import Any
 from app.core.config import auth
 from fastapi.security import HTTPBearer
-
+from app.schemas.sche_page import PaginationParams
+from app.until.page import Page
 router = APIRouter()
 
 @router.post("/login", response_model=DataResponse[Token])
@@ -33,6 +34,9 @@ def detail_me(user_service: UserService= Depends(),auth2:HTTPBearer =Depends(aut
     current_user = user_service.get_current_user(http_authorization_credentials=auth2)
     return DataResponse().success_response(data=UserResponse(**current_user.__dict__))
 
+@router.get("/page/", response_model=DataResponse[Page[UserResponse]])
+async def read(param:PaginationParams=Depends(), user_service: UserService= Depends() ):
+    return DataResponse().success_response(data=user_service.get_page_user(param=param))
 
 @router.post("/", response_model=UserResponse)
 def create(user: UserCreate, user_service: UserService= Depends() ):
@@ -42,3 +46,5 @@ def create(user: UserCreate, user_service: UserService= Depends() ):
 @router.get("/{user_id}", response_model=UserResponse)
 async def read(user_id: int, user_service: UserService= Depends() ):
     return user_service.get_user(user_id)
+
+

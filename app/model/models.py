@@ -4,7 +4,7 @@ from app.model.model_base import BareBaseModel
 
 
 class User(BareBaseModel):
-   
+    
     name = Column(String(100), nullable=False)
     age = Column(Integer, nullable=True)
     role = Column(String(50), nullable=False, default="user")
