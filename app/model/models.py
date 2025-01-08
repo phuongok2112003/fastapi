@@ -26,6 +26,7 @@ class Post(BareBaseModel):
     author = relationship("User", back_populates="posts")
     comments = relationship("Comment",back_populates="posts")
     images=relationship("Image",back_populates="posts")
+    favorites=relationship("Favorite",back_populates="posts")
 class Comment(BareBaseModel):
     content =Column(Text, nullable=False)
     author_id = Column(Integer, ForeignKey("user.id"))
@@ -35,6 +36,9 @@ class Comment(BareBaseModel):
     posts =relationship("Post",back_populates="comments")
 class Favorite(BareBaseModel):
     author_id = Column(Integer, ForeignKey("user.id"))
+    post_id=Column(Integer,ForeignKey("post.id"))
+     
+    posts =relationship("Post",back_populates="favorites") 
     author = relationship("User", back_populates="favorites")
     
 
@@ -43,7 +47,8 @@ class Image(BareBaseModel):
     url=Column(String(200),nullable=False)
     post_id=Column(Integer,ForeignKey("post.id"))
     author_id=Column(Integer,ForeignKey("user.id"))
-
+    public_id=Column(str(200),primary_key=True)
+    
     author = relationship("User", back_populates="images")
     posts =relationship("Post",back_populates="images")
 

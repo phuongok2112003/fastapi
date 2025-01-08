@@ -13,10 +13,11 @@ from typing import Optional
 from fastapi_sqlalchemy import db
 from app.until.page import paginate,Page
 from app.schemas.sche_page import PaginationParams
+from app.service.mapper.Mapper import user_mapper
 class UserService:
     def __init__(self):
         self.db = db.session
-        
+      
        
   
     def create_user(self, user: UserCreate) -> User:
@@ -60,4 +61,5 @@ class UserService:
     
     def get_page_user(self,param:PaginationParams)->"Page[UserResponse]":
         _query=self.db.query(User)
-        return paginate(model=User,model_response=UserResponse,query=_query,params=param)
+       
+        return paginate(model=User,model_response=user_mapper ,query=_query,params=param)

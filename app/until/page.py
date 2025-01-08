@@ -26,7 +26,7 @@ def paginate(model,model_response, query: Query, params: Optional[PaginationPara
             .offset(params.page_size * (params.page - 1))
             .all()
         )
-        data_response=[ model_response(**de.__dict__) for de in data]
+        data_response=[ model_response(de) for de in data]
         return Page(
             total_items=total,
             current_page=params.page,

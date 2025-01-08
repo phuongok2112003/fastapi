@@ -8,6 +8,7 @@ class CommentBase(BaseModel):
 class CommentRequest(CommentBase):
     pass 
 class CommentResponse(CommentBase):
+    id:int
     username: str
     post_id : int
     createdAt : str
