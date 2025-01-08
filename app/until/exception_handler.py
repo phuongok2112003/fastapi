@@ -16,5 +16,5 @@ class CustomException(Exception):
 async def http_exception_handler(request: Request, exc: CustomException):
     return JSONResponse(
         status_code=exc.http_code,
-        content=jsonable_encoder(DataResponse().custom_response(exc.code, exc.message))
+        content=jsonable_encoder(DataResponse().custom_response(exc.code, exc.message,data=None))
     )

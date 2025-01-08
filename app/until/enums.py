@@ -2,10 +2,14 @@ from enum import Enum
 from sqlalchemy.orm import class_mapper
 from sqlalchemy import inspect
 from typing import Type
-from app.model.models import User
+
 class OrderBy(Enum):
    DESC= "desc"
    ASC= "asc"
+class FriendshipStatus(Enum):
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
 def generate_enum_from_model(model: Type) -> Type[Enum]:
     
     # Get the columns of the model
@@ -17,4 +21,5 @@ def generate_enum_from_model(model: Type) -> Type[Enum]:
     # Create and return Enum class
     return Enum(model.__name__ + "Fields", enum_dict)
 
-UserFieldsEnum = generate_enum_from_model(User)
+
+

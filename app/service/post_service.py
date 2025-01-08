@@ -1,4 +1,3 @@
-from sqlalchemy.orm import Session
 from app.model.models import Post
 from app.schemas.sche_post import PostCreate
 from fastapi_sqlalchemy import db
