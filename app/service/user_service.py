@@ -14,12 +14,11 @@ from fastapi_sqlalchemy import db
 from app.until.page import paginate,Page
 from app.schemas.sche_page import PaginationParams
 from app.service.mapper.Mapper import user_mapper
+from fastapi import Depends
 class UserService:
     def __init__(self):
         self.db = db.session
       
-       
-  
     def create_user(self, user: UserCreate) -> User:
         exist_user = self.db.query(User).filter(User.email == user.email).first()
         if exist_user:
@@ -31,6 +30,11 @@ class UserService:
         return db_user
 
     def get_current_user(self,http_authorization_credentials:HTTPBearer) -> User:
+        if not http_authorization_credentials:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token is missing"
+            )
         try:
             payload = jwt.decode(
                 http_authorization_credentials.credentials, settings.SECRET_KEY,

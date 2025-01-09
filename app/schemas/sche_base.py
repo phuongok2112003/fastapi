@@ -17,7 +17,7 @@ class DataResponse(BaseModel, Generic[T]):
 
     def success_response(self, data: T) -> "DataResponse[T]":
         # Trả về đối tượng DataResponse với trạng thái thành công
-        return DataResponse[T](code='000', message='Thành công', data=data)
+        return DataResponse[T](code='200', message='Thành công', data=data)
 
 class MetadataSchema(BaseModel):
     current_page: int

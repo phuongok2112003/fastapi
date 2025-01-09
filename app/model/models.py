@@ -44,10 +44,10 @@ class Favorite(BareBaseModel):
 
 
 class Image(BareBaseModel):
-    url=Column(String(200),nullable=False)
+    url=Column(String(256),nullable=False)
     post_id=Column(Integer,ForeignKey("post.id"))
     author_id=Column(Integer,ForeignKey("user.id"))
-    public_id=Column(str(200),primary_key=True)
+    public_id=Column(String(200),primary_key=True)
     
     author = relationship("User", back_populates="images")
     posts =relationship("Post",back_populates="images")

@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from app.schemas.sche_user import UserCreate, UserResponse, EmailPass
 from app.schemas.sche_base import DataResponse
 from app.schemas.sche_token import Token
 from app.service.user_service import UserService
-from app.db.session import get_db
 from app.core.security import create_access_token
-from typing import Any
 from app.core.config import auth
 from fastapi.security import HTTPBearer
 from app.schemas.sche_page import PaginationParams
