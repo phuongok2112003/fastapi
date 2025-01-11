@@ -4,7 +4,7 @@ from app.schemas.sche_user import UserResponse
 from app.schemas.sche_friend import FriendResponse
 from app.schemas.sche_post import PostResponse
 from app.schemas.sche_favorites import FavoriteResponde
-from app.schemas.sche_image import ImageResponse,ImageBase
+from app.schemas.sche_image import ImageResponse,ImageBase,ImageRequest
 from typing import List
 
 def comment_mapper(comment:Comment)->CommentResponse:
@@ -21,6 +21,13 @@ def image_mapper(image:List[Image])->ImageResponse:
           anh_response=ImageBase(url=anh.url)
           list_anh.append(anh_response)
      return ImageResponse(imgase=list_anh)
+def image_mapper_request(image)->ImageRequest:
+     list_anh= []
+     for anh in image:
+          anh_response=ImageBase(url=anh.url)
+          list_anh.append(anh_response)
+     return ImageRequest(imgase=list_anh)
+
 def post_mapper(post:Post)->PostResponse:
      return PostResponse(content=post.content,user=user_mapper(post.author),
                          comment= [  comment_mapper(comment)for comment in post.comments ],

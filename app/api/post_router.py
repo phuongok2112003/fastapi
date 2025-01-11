@@ -17,5 +17,17 @@ def create(post: PostCreate,postservice:PostService=Depends(),user:User=Depends(
 
 
 @router.get("/", response_model=DataResponse[Page[PostResponse]])
-def read(param:PaginationParams=Depends(),postservice:PostService=Depends()):
-    return DataResponse().success_response(data=postservice.get_posts(param=param))
+def read(user:User=Depends(login_required),param:PaginationParams=Depends(),postservice:PostService=Depends()):
+    return DataResponse().success_response(data=postservice.get_posts(param=param,user=user))
+
+@router.patch("/{post_id}", response_model=DataResponse[Page[PostResponse]])
+def read(post_id:int,post: PostCreate,user:User=Depends(login_required),postservice:PostService=Depends()):
+    return DataResponse().success_response(data=postservice.update_post(post_id=post_id,post=post,user=user))
+
+@router.get("/{post_id}", response_model=DataResponse[PostResponse],dependencies=[Depends(login_required)])
+def read(post_id:int,postservice:PostService=Depends()):
+    return DataResponse().success_response(data=postservice.get_post_by_id(post_id=post_id))
+
+@router.delete("/{post_id}", response_model=DataResponse[object])
+async def read(post_id:int,user:User=Depends(login_required),postservice:PostService=Depends()):
+    return DataResponse().success_response(data= await postservice.delete_post(post_id=post_id,user=user))
