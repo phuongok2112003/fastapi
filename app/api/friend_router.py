@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/add-friend", response_model=DataResponse[FriendResponse])
 def add_friend(receiver_id:int,friend_service:FriendService=Depends(),user:User=Depends(login_required)):
-    return  DataResponse().success_response(data=friend_service.add_friend(receiver_id=receiver_id,user= user))
+    return  DataResponse().success_response(data=friend_service.add_friend(receiver_id=receiver_id,sender= user))
 
 @router.post("/response-friend", response_model=DataResponse[FriendResponse])
 def response_friend(sender_id:int,request_friend:FriendshipStatus,friend_service:FriendService=Depends(),user:User=Depends(login_required)):

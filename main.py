@@ -6,7 +6,11 @@ from app.core.config import settings
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware
-from app.until.exception_handler import CustomException,http_exception_handler
+from app.until.exception_handler import CustomException,http_exception_handler,default_exception_handler
+import logging
+
+# Cấu hình logging
+logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
 Base.metadata.create_all(bind=engine)
 
 
@@ -21,6 +25,7 @@ def start_application()->FastAPI:
     application.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
     application.include_router(router=router,prefix=settings.API_PREFIX)
     application.add_exception_handler(CustomException, http_exception_handler)
+    application.add_exception_handler(Exception,default_exception_handler)
     return application
 
 app = start_application()

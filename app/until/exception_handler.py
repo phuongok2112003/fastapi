@@ -18,3 +18,10 @@ async def http_exception_handler(request: Request, exc: CustomException):
         status_code=exc.http_code,
         content=jsonable_encoder(DataResponse().custom_response(exc.code, exc.message,data=None))
     )
+
+
+async def default_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"message": "An unexpected error occurred. Please try again later."}
+    )
