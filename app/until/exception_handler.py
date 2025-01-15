@@ -2,6 +2,8 @@ from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from app.schemas.sche_base import DataResponse
+import logging
+logger=logging.getLogger("app")
 class CustomException(Exception):
     http_code: int
     code: str
@@ -14,6 +16,7 @@ class CustomException(Exception):
 
 
 async def http_exception_handler(request: Request, exc: CustomException):
+    logger.warning(f"warning: {exc.message}")
     return JSONResponse(
         status_code=exc.http_code,
         content=jsonable_encoder(DataResponse().custom_response(exc.code, exc.message,data=None))
@@ -21,6 +24,7 @@ async def http_exception_handler(request: Request, exc: CustomException):
 
 
 async def default_exception_handler(request: Request, exc: Exception):
+    logger.error(f"error : {exc}")
     return JSONResponse(
         status_code=500,
         content={"message": "An unexpected error occurred. Please try again later."}

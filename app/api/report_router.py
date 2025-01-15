@@ -12,11 +12,9 @@ router = APIRouter()
 @router.post("/report-a-week")
 def create(reportservice:ReportService=Depends(),user:User=Depends(login_required)):
     excel_file = reportservice.report(user=user)
-    
-    # Use the user's name to create the filename
+
     filename = f"report_for_{user.name}.xlsx"
     
-    # Return the file as a StreamingResponse with appropriate content type and headers
     return StreamingResponse(
         excel_file, 
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 

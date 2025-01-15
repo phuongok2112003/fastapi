@@ -8,7 +8,7 @@ from app.model.models import Image
 from app.until.exception_handler import CustomException
 from app.core.config import settings
 from app.until.get_public_id import extract_public_id
-# Cấu hình Cloudinary
+from starlette import status
 cloudinary.config(
     cloud_name=settings.CLOUD_NAME,
     api_key=settings.API_KEY,
@@ -42,7 +42,8 @@ class ImageService:
                 cloudinary.uploader.destroy(extract_public_id(image.url))
               
             except Exception as e:
-                return {"error": str(e)}
+                raise CustomException(http_code=status.HTTP_400_BAD_REQUEST,code="400",message=e)
+               
         return {"message": "Image with public_id  has been deleted successfully."}
 
 
