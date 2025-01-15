@@ -5,10 +5,12 @@ from app.until.exception_handler import CustomException
 from app.schemas.sche_page import PaginationParams
 from app.until.page import paginate,Page
 from app.service.mapper.Mapper import comment_mapper
-
+import logging
+from app.until.format_log import get_format_log
 class CommentService:
     def __init__(self):
         self.db=db.session
+        self.logger=logging.getLogger("app")
         
       
     def add_comment(self,post_id:int,comment_request:CommentRequest,user:User)->CommentResponse:
@@ -30,7 +32,8 @@ class CommentService:
         comment=self.db.query(Comment).filter(Comment.id==comment_id).first()
       
         if comment.author_id !=user.id:
-             raise CustomException(http_code=403,code="403",message="Ban khong co quyen")
+            self.logger.critical(get_format_log(mes="Ban khong co quyen",user_id=user.id))
+            raise CustomException(http_code=403,code="403",message="Ban khong co quyen")
         if comment is None:
             raise CustomException(http_code=400,code="400",message="Comment id khong ton tai")
         comment.content=comment_request.content
@@ -41,8 +44,10 @@ class CommentService:
     def delete_comment(self,comment_id:int,user:User):
         comment=self.db.query(Comment).filter(Comment.id==comment_id).first()
         if comment is None:
+            self.logger.warning(f"Comment id khong ton tai : {comment_id}")
             raise CustomException(http_code=400,code="400",message="Comment id khong ton tai")
         if comment.author_id !=user.id:
+                self.logger.critical(f"Ban khong co quyen {user.email}")
                 raise CustomException(http_code=403,code="403",message="Ban khong co quyen")   
   
         self.db.refresh(comment)

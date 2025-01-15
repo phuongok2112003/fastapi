@@ -13,9 +13,7 @@ router = APIRouter()
 @router.post("/login", response_model=DataResponse[Token])
 def logins(user: EmailPass, user_service: UserService= Depends()):
     user_login = user_service.login(email_password=user)
-    if not user_login:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    
+  
     # Tạo token
     token = Token(access_token=create_access_token(user_login))
     

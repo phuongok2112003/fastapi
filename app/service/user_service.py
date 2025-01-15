@@ -14,9 +14,13 @@ from app.until.page import paginate,Page
 from app.schemas.sche_page import PaginationParams
 from app.service.mapper.Mapper import user_mapper
 from app.until.exception_handler import CustomException
+import logging
+from app.until.format_log import get_format_log
+
 class UserService:
     def __init__(self):
         self.db = db.session
+        self.logger=logging.getLogger("app")
       
     def create_user(self, user: UserCreate) -> User:
         exist_user = self.db.query(User).filter(User.email == user.email).first()
@@ -31,7 +35,7 @@ class UserService:
 
     def get_current_user(self,http_authorization_credentials:HTTPBearer) -> User:
         if not http_authorization_credentials:
-         
+            self.logger.error("Token is missing")
             raise CustomException(http_code=401,code="401",message="Token is missing")
 
         try:
@@ -41,10 +45,12 @@ class UserService:
             )
             token_data = TokenPayload(**payload)
         except (jwt.PyJWTError, ValidationError):
+            self.logger.critical(get_format_log(mes="Could not validate credentials"))
             raise CustomException(http_code=status.HTTP_403_FORBIDDEN,code="403",message="Could not validate credentials")
 
         user = self.db.query(User).get(token_data.user_id)
         if not user:
+            self.logger.error("User not found")
             raise CustomException(http_code=status.HTTP_404_NOT_FOUND,code="404",message="User not found")
           
         return user
@@ -58,7 +64,8 @@ class UserService:
     def login(self, email_password: EmailPass) -> Optional[User]:
         user = self.db.query(User).filter(User.email == email_password.email).first()
         if not user or not verify_password(email_password.password, user.password):
-            return None
+            raise CustomException(http_code=status.HTTP_404_NOT_FOUND,code="404",message="Incorrect email or password")
+    
         return user
     
     def get_page_user(self,param:PaginationParams)->"Page[UserResponse]":
