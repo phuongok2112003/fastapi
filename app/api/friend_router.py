@@ -18,7 +18,7 @@ def add_friend(receiver_id:int,friend_service:FriendService=Depends(),user:User=
 
 @router.post("/response-friend", response_model=DataResponse[FriendResponse])
 def response_friend(sender_id:int,request_friend:FriendshipStatus,friend_service:FriendService=Depends(),user:User=Depends(login_required)):
-    return  DataResponse().success_response(data=friend_service.response_friend(sender_id=sender_id,request=request_friend,user= user))
+    return  DataResponse().success_response(data=friend_service.response_friend(sender_id=sender_id,request=request_friend,receiver= user))
 
 
 @router.get("/list-friend", response_model=DataResponse[Page[UserResponse]])
